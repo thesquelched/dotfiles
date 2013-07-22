@@ -1,0 +1,21 @@
+"hg6714
+
+loadplugins '\.(js|penta)$'
+group user
+"set editor='gvim -f +<line> +"sil! call cursor(0, <column>)" <file>'
+
+" vim: set ft=pentadactyl:
+
+map , <Leader>
+set hlfind
+set hintmatching=contains
+set newtab+=help
+set hintkeys=0123456789
+
+command! newtweets -description "Load any new tweets" -javascript 
+    \ var tweetElem = content.document.getElementsByClassName('new-tweets-bar')[0];
+    \ if (tweetElem != null) {
+    \     tweetElem.click();
+    \ }
+
+autocmd LocationChange twitter.com :newtweets
