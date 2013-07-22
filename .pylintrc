@@ -1,0 +1,24 @@
+[MESSAGES CONTROL]
+# W0142: Disable '* or ** magic' warning
+# R0922: Abstract class is only referenced 1 times
+disable=W0142,R0922,R0902,R0903,W0703,W0603,W0622,W0105,W0401
+
+[DESIGN]
+max-args=8
+max-locals=30
+max-attributes=15
+max-public-methods=50
+
+[FORMAT]
+indent-string="  "
+
+[REPORTS]
+include-ids=y
+
+[BASIC]
+bad-functions=apply,input
+method-rgx=[a-z_][a-z0-9_]{1,30}$
+variable-rgx=[a-z_][a-z0-9_]{1,30}$
+argument-rgx=[a-z_][a-z0-9_]{1,30}$
+module-rgx=[a-zA-Z_]{2,30}$
+
