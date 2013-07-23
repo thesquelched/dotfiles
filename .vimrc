@@ -1,5 +1,8 @@
 set nocp
+
 call pathogen#infect()
+call pathogen#helptags()
+
 syntax on
 filetype plugin indent on
 syntax sync minlines=256
