@@ -7,10 +7,17 @@ syntax on
 filetype plugin indent on
 syntax sync minlines=256
 
+
 " Appearance {{{
+
 set background=dark
 colorscheme solarized
 highlight SignColumn guibg=black
+
+if has('gui_running')
+    set guifont=Inconsolata\ Medium\ 8
+endif
+
 " }}}
 
 " Abbreviations {{{
