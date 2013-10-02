@@ -7,6 +7,7 @@ syntax on
 filetype plugin indent on
 syntax sync minlines=256
 
+let g:xml_syntax_folding=1
 
 " Appearance {{{
 
@@ -24,6 +25,7 @@ endif
 
 " Insert mode
 iabbrev serach search
+iabbrev classme3thod classmethod
 
 " }}}
 
@@ -160,6 +162,14 @@ augroup filetype_vim
 augroup END
 " }}}
 
+" XML settings {{{
+augroup filetype_xml
+    autocmd!
+    autocmd FileType xml setlocal foldmethod=syntax
+augroup END
+
+" }}}
+
 " YAML settings {{{
 augroup filetype_yaml
   autocmd!
@@ -167,5 +177,25 @@ augroup filetype_yaml
   autocmd FileType yaml setlocal tabstop=2
   autocmd FileType yaml setlocal softtabstop=2
   autocmd FileType yaml setlocal shiftwidth=2
+augroup END
+" }}}
+
+" JS settings {{{
+augroup filetype_js
+  autocmd!
+  autocmd FileType javascript setlocal foldmethod=indent
+  autocmd FileType javascript setlocal tabstop=2
+  autocmd FileType javascript setlocal softtabstop=2
+  autocmd FileType javascript setlocal shiftwidth=2
+augroup END
+" }}}
+
+" HTML settings {{{
+augroup filetype_HTML
+  autocmd!
+  autocmd FileType html setlocal foldmethod=indent
+  autocmd FileType html setlocal tabstop=2
+  autocmd FileType html setlocal softtabstop=2
+  autocmd FileType html setlocal shiftwidth=2
 augroup END
 " }}}
