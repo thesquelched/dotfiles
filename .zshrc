@@ -1,85 +1,105 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
-
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
-
-# Comment this out to disable bi-weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment to change how many often would you like to wait before auto-updates occur? (in days)
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-# COMPLETION_WAITING_DOTS="true"
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(ant cake coffee compleat cp cpanm django git git-extras gitfast git-flow github git-remote-branch history history-substring-search lein mercurial mvn node npm perl pip python rake rbenv ruby rvm screen svn yum)
-
-
-
-source $ZSH/oh-my-zsh.sh
-
-umask 022
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
 
 # Customize to your needs...
 
-if [ -f ~/.zsh_nocorrect ]; then
-    while read -r COMMAND; do
-        alias $COMMAND="nocorrect $COMMAND"
-    done < ~/.zsh_nocorrect
-fi
+######################################################################
+# Variables
+######################################################################
 
-# Functions
-pskill ()
-{ 
-	local pid
-	pid=$(ps -ax | grep $1 | grep -v grep | awk '{ print $1 }')
-	echo -n "killing $1 (process $pid)..."
-	kill -9 $=pid
+unsetopt CORRECT
 
-  if (( $? > 0 ))
-  then 
-    echo "Failed to kill $1"
-  else
-    echo -n "slaughtered."
-  fi
+#export PATH=$HOME/bin:/usr/local/bin:/usr/local/sbin:$HOME/Applications:$PATH
+
+######################################################################
+# Functions/aliases
+######################################################################
+
+alias gvim=mvim
+
+venv_activate() {
+    source .venv*/bin/activate
 }
 
-src ()
-{
-	autoload -U zrecompile
-	[ -f ~/.zshrc ] && zrecompile -p ~/.zshrc
-	[ -f ~/.zcompdump ] && zrecompile -p ~/.zcompdump
-	[ -f ~/.zshrc.zwc.old ] && rm -f ~/.zshrc.zwc.old
-	[ -f ~/.zcompdump.zwc.old ] && rm -f ~/.zcompdump.zwc.old
-	source ~/.zshrc
+mkvenv() {
+    virtualenv .venv
+    venv_activate
 }
 
-zsum()
-{
-  perl -ae '{map {$sum+=$_} <>; print "$sum\n"}' $@
+# Git functions/aliases
+
+alias gf="git fetch --all --prune"
+alias gcb="git checkout -b"
+
+git_untrack() {
+    git update-index --assume-unchanged $@
 }
 
-# Exports
-export PATH=$HOME/bin:$PATH
-export HISTIGNORE="&:ls"
-export EDITOR=vim
+git_track() {
+    git update-index --no-assume-unchanged $@
+}
+
+git_branch_cleanup() {
+    if [[ -z "$1" ]]; then
+        BRANCH="master"
+    else
+        BRANCH=$1
+    fi
+
+    MERGED=$(git branch --merged | grep -v $BRANCH | grep -vF '*' | grep -v docker-hub | tr -d " ")
+    if [[ -z "$MERGED" ]]; then
+        echo "No merged branches"
+    else
+        echo $MERGED
+        echo
+        echo -n "Delete merged branches (y/N)? "
+        read CONFIRM
+        if [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]]; then
+            echo $MERGED | xargs git branch -d
+            echo "Deleted branches"
+        else
+            echo "Aborted"
+        fi
+    fi
+
+    git branch -r --merged |
+    grep origin |
+    grep -v '>' |
+    grep -v $BRANCH |
+    xargs -L1 |
+    cut -d"/" -f2- |
+    xargs git push origin --delete
+}
+
+git_update() {
+    REMOTE="upstream"
+    if [[ -n "$1" ]]; then REMOTE=$1; fi
+
+    if [[ -z "$2" ]]; then
+        BRANCH="master"
+    else
+        BRANCH=$2
+    fi
+
+    git checkout $BRANCH
+    git fetch --all --prune
+    git merge $REMOTE/$BRANCH
+    git_branch_cleanup
+}
+
+git_pr_update() {
+    REMOTE="origin"
+    if [[ -n "$1" ]]; then REMOTE=$1; fi
+    BRANCH=`git branch | grep -F '*' | cut -d" " -f2`
+    git commit --amend -a
+    git push --force $REMOTE $BRANCH
+}

@@ -1,0 +1,6 @@
+.venv
+.venv3
+.ropeproject
+.eggs
+.DS_Store
+.ipynb_checkpoints

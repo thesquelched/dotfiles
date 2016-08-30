@@ -7,17 +7,25 @@ syntax on
 filetype plugin indent on
 syntax sync minlines=256
 
-let g:xml_syntax_folding=1
 
 " Appearance {{{
 
 set background=dark
-colorscheme solarized
-highlight SignColumn guibg=black
 
 if has('gui_running')
-    set guifont=Inconsolata\ Medium\ 8
+  highlight SignColumn guibg=black
+
+  if has("unix")
+      let s:uname = system("uname -s")
+      if s:uname == "Linux\n"
+        set guifont=Inconsolata\ Medium\ 8
+      endif
+  endif
+else
+  let g:solarized_termcolors=256
 endif
+
+colorscheme solarized
 
 " }}}
 
@@ -25,7 +33,6 @@ endif
 
 " Insert mode
 iabbrev serach search
-iabbrev classme3thod classmethod
 
 " }}}
 
@@ -69,6 +76,50 @@ set showmatch
 set foldopen-=search
 " }}}
 
+" Undo/Backup/Swap files {{{
+
+" Save your backups to a less annoying place than the current directory.
+" If you have .vim-backup in the current directory, it'll use that.
+" Otherwise it saves it to ~/.vim/backup or . if all else fails.
+if isdirectory($HOME . '/.vim/backup') == 0
+  :silent !mkdir -p ~/.vim/backup >/dev/null 2>&1
+endif
+set backupdir-=.
+set backupdir+=.
+set backupdir-=~/
+set backupdir^=~/.vim/backup/
+set backupdir^=./.vim-backup/
+set backup
+
+" Save your swp files to a less annoying place than the current directory.
+" If you have .vim-swap in the current directory, it'll use that.
+" Otherwise it saves it to ~/.vim/swap, ~/tmp or .
+if isdirectory($HOME . '/.vim/swap') == 0
+  :silent !mkdir -p ~/.vim/swap >/dev/null 2>&1
+endif
+set directory=./.vim-swap//
+set directory+=~/.vim/swap//
+set directory+=~/tmp//
+set directory+=.
+
+" viminfo stores the the state of your previous editing session
+set viminfo+=n~/.vim/viminfo
+
+if exists("+undofile")
+  " undofile - This allows you to use undos after exiting and restarting
+  " This, like swap and backups, uses .vim-undo first, then ~/.vim/undo
+  " :help undo-persistence
+  " This is only present in 7.3+
+  if isdirectory($HOME . '/.vim/undo') == 0
+    :silent !mkdir -p ~/.vim/undo > /dev/null 2>&1
+  endif
+  set undodir=./.vim-undo//
+  set undodir+=~/.vim/undo//
+  set undofile
+endif
+
+" }}}
+
 " }}}
 
 
@@ -83,6 +134,12 @@ let maplocalleader = "\\"
 " }}}
 
 " Normal Mode bindings {{{
+
+" PymodeLint
+nnoremap <Leader>l :PymodeLint<CR>
+
+" Save and next buffer
+nnoremap <Leader>bn :w<CR>:bn<CR>
 
 " Lose highlighting
 nnoremap <Leader>u :noh<CR>
@@ -106,6 +163,23 @@ vnoremap <leader>f :!xmllint --format -<CR>
 
 " }}}
 
+" {{{ Python bindings
+
+" Convert `key=value` to `'key': value`, e.g.
+"
+"   foo=1,
+"   bar=2
+"
+" becomes...
+"
+"   'foo': 1,
+"   'bar': 2
+
+vnoremap <leader>d :norm ^yst='f=c1l: <CR>
+vnoremap <leader>D :norm ^ds'f:c2l=<CR>
+
+" }}}
+
 " Misc bindings {{{
 
 " Regex fixes
@@ -125,9 +199,6 @@ inoremap <c-H> <esc>yyp<c-v>$r=A
 
 " Plugin Settings {{{
 
-" Eclim
-let g:EclimXmlValidate = 0
-
 " Vimclojure {{{
 let vimclojure#FuzzyIndent=1
 let vimclojure#HighlightBuiltins=1
@@ -142,7 +213,31 @@ let vimclojure#SplitPos = "bottom"
 " }}}
 " {{{ python-mode
 
+" Use 100-character lines for internal code, use 80 for personal code
+function! SetPymodeOptions(width)
+    let l:tw = a:width-2
+    let g:pymode_options_max_line_length = a:width
+    let &textwidth = l:tw
+endfunction
+
+"function! SetPymodePy3k()
+"    let g:pymode_python = "python3"
+"    source ~/.vim/bundle/python-mode/plugin/pymode.vim
+"endfunction
+
+let g:pymode_options_max_line_length = 100
+autocmd BufRead,BufNewFile */git/personal/* call SetPymodeOptions(80)
+
+let g:pymode_lint_ignore = "W0401"
 let g:pymode_folding = 0
+let g:pymode_rope_completion = 0
+let g:pymode_rope = 0
+let g:pymode_rope_complete_on_dot = 0
+let g:pymode_lint_options_pylint =
+    \ {'rcfile': './pylint.conf'}
+
+"let g:pymode_rope_lookup_project = 0
+"let g:pymode_rope_autoimport = 0
 
 " }}}
 
@@ -162,14 +257,6 @@ augroup filetype_vim
 augroup END
 " }}}
 
-" XML settings {{{
-augroup filetype_xml
-    autocmd!
-    autocmd FileType xml setlocal foldmethod=syntax
-augroup END
-
-" }}}
-
 " YAML settings {{{
 augroup filetype_yaml
   autocmd!
@@ -180,22 +267,6 @@ augroup filetype_yaml
 augroup END
 " }}}
 
-" JS settings {{{
-augroup filetype_js
-  autocmd!
-  autocmd FileType javascript setlocal foldmethod=indent
-  autocmd FileType javascript setlocal tabstop=2
-  autocmd FileType javascript setlocal softtabstop=2
-  autocmd FileType javascript setlocal shiftwidth=2
-augroup END
-" }}}
-
-" HTML settings {{{
-augroup filetype_HTML
-  autocmd!
-  autocmd FileType html setlocal foldmethod=indent
-  autocmd FileType html setlocal tabstop=2
-  autocmd FileType html setlocal softtabstop=2
-  autocmd FileType html setlocal shiftwidth=2
-augroup END
+" Misc Settings {{{
+autocmd filetype crontab setlocal nobackup nowritebackup
 " }}}

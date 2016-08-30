@@ -1,0 +1,27 @@
+"3.10.1 (created: 2015/08/25 00:41:59)
+
+source! /Users/scot8460/.vimperatorrc.local
+
+" vim: set ft=vimperator:
+
+map , <Leader>
+
+set editor='/Users/scot8460/Applications/mvim -f +<line> +"sil! call cursor(0, <column>)" <file>'
+
+set hlfind
+set hintmatching=contains
+set newtab+=help
+set hintkeys=0123456789
+set gui=nonavigation
+
+" command! newtweets -description "Load any new tweets" javascript
+"     \ var tweetElem = content.document.getElementsByClassName('new-tweets-bar')[0];
+"     \ if (tweetElem != null) {
+"     \     tweetElem.click();
+"     \ }
+"
+" autocmd LocationChange twitter.com :newtweets
+
+" Quickmarks
+qmark t http://www.twitter.com
+qmark m http://www.fastmail.com
