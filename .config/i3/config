@@ -65,7 +65,7 @@ bindsym $mod+space focus mode_toggle
 bindsym $mod+a focus parent
 
 # session controls
-bindsym $mod+Shift+x exec i3lock
+bindsym $mod+Shift+x exec i3lock --image=/home/scott/images/desktop.png
 
 # volume controls
 bindsym XF86AudioRaiseVolume exec pamixer --increase 5
@@ -152,7 +152,7 @@ bar {
     position          top
     mode              dock
     workspace_buttons yes
-    strip_workspace_numbers yes
+    strip_workspace_numbers no
 
     font pango:monospace 12
 
