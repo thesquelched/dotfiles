@@ -4,7 +4,7 @@ set -eu -o pipefail
 
 VIM=$HOME/.vim
 BUNDLE=$VIM/bundle
-REPOS=(tpope/vim-surround tpope/vim-repeat klen/python-mode)
+REPOS=(tpope/vim-surround tpope/vim-repeat klen/python-mode altercation/vim-colors-solarized)
 
 # Install pathogen
 mkdir -p $VIM/autoload
