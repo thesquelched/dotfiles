@@ -10,7 +10,8 @@ REPOS=(\
     klen/python-mode \
     altercation/vim-colors-solarized \
     vimperator/vimperator.vim \
-    tpope/vim-fugitive)
+    tpope/vim-fugitive \
+    scrooloose/nerdtree)
 
 # Install pathogen
 mkdir -p $VIM/autoload
