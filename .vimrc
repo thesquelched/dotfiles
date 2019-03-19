@@ -1,11 +1,19 @@
-set nocp
+set nocompatible
 
 call pathogen#infect()
 call pathogen#helptags()
 
+" https://github.com/vim/vim/issues/3117#issuecomment-402622616
+
+if has('python3')
+  silent! python3 1
+endif
+
 syntax on
 filetype plugin indent on
 syntax sync minlines=256
+set modeline
+set modelines=5
 
 
 " Appearance {{{
@@ -33,13 +41,19 @@ colorscheme solarized
 
 " Insert mode
 iabbrev serach search
+iabbrev commerge commerce
+iabbrev shippign shipping
+iabbrev integraiton integration
+iabbrev accoutn account
+iabbrev envirornment environment
+iabbrev enviornment environment
+iabbrev datae data
 
 " }}}
 
 " All Settings {{{
 
 " Spacing {{{
-set modelines=0
 set autoindent
 set tabstop=4
 set softtabstop=4
@@ -62,6 +76,7 @@ set scrolloff=3
 set showcmd
 set wildmenu
 set wildmode=list:longest
+set wildignore+=**/*.egg-info/**
 set ttyfast
 set ruler
 set laststatus=2
@@ -225,8 +240,9 @@ endfunction
 "    source ~/.vim/bundle/python-mode/plugin/pymode.vim
 "endfunction
 
-let g:pymode_options_max_line_length = 100
-autocmd BufRead,BufNewFile */git/personal/* call SetPymodeOptions(80)
+let g:pymode_python = "python3"
+let g:pymode_options_max_line_length = 99
+" autocmd BufRead,BufNewFile */git/personal/* call SetPymodeOptions(99)
 
 let g:pymode_lint_ignore = "W0401"
 let g:pymode_folding = 0
@@ -264,6 +280,43 @@ augroup filetype_yaml
   autocmd FileType yaml setlocal tabstop=2
   autocmd FileType yaml setlocal softtabstop=2
   autocmd FileType yaml setlocal shiftwidth=2
+augroup END
+" }}}
+"
+" javascript settings {{{
+augroup filetype_javascript
+  autocmd!
+  autocmd FileType javascript setlocal tabstop=2
+  autocmd FileType javascript setlocal softtabstop=2
+  autocmd FileType javascript setlocal shiftwidth=2
+augroup END
+" }}}
+
+" Terraform settings {{{
+augroup filetype_tf
+  autocmd!
+  autocmd FileType tf setlocal tabstop=2
+  autocmd FileType tf setlocal softtabstop=2
+  autocmd FileType tf setlocal shiftwidth=2
+augroup END
+" }}}
+
+" Terraform settings {{{
+augroup filetype_vim
+  autocmd!
+  autocmd FileType vim setlocal tabstop=2
+  autocmd FileType vim setlocal softtabstop=2
+  autocmd FileType vim setlocal shiftwidth=2
+augroup END
+" }}}
+
+" Avro schema settings {{{
+augroup filetype_avsc
+  autocmd!
+  autocmd FileType avsc setlocal filetype=json
+  autocmd FileType avsc setlocal tabstop=2
+  autocmd FileType avsc setlocal softtabstop=2
+  autocmd FileType avsc setlocal shiftwidth=2
 augroup END
 " }}}
 

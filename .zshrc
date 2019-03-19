@@ -55,9 +55,10 @@ git_branch_cleanup() {
         BRANCH=$1
     fi
 
-    MERGED=$(git branch --merged | grep -v $BRANCH | grep -vF '*' | grep -v docker-hub | tr -d " ")
+    MERGED=$(git branch --merged | grep -v $BRANCH | grep -v master | grep -vF '*' | grep -v docker-hub | tr -d " ")
     if [[ -z "$MERGED" ]]; then
         echo "No merged branches"
+        return 1
     else
         echo $MERGED
         echo
@@ -68,10 +69,12 @@ git_branch_cleanup() {
             echo "Deleted branches"
         else
             echo "Aborted"
+            return 1
         fi
     fi
 
     git branch -r --merged |
+    grep -E "$(echo $MERGED | paste -sd '|' -)" |
     grep origin |
     grep -v '>' |
     grep -v $BRANCH |
@@ -81,7 +84,7 @@ git_branch_cleanup() {
 }
 
 git_update() {
-    REMOTE="upstream"
+    REMOTE="origin"
     if [[ -n "$1" ]]; then REMOTE=$1; fi
 
     if [[ -z "$2" ]]; then
@@ -92,7 +95,7 @@ git_update() {
 
     git checkout $BRANCH
     git fetch --all --prune
-    git merge $REMOTE/$BRANCH
+    git merge --ff-only $REMOTE/$BRANCH
     git_branch_cleanup
 }
 
