@@ -1,7 +1,13 @@
 set nocompatible
 
-call pathogen#infect()
-call pathogen#helptags()
+call plug#begin()
+ Plug 'altercation/vim-colors-solarized'
+ Plug 'tpope/vim-surround'
+ Plug 'tpope/vim-repeat'
+ Plug 'vim-latex/vim-latex'
+ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+ Plug 'junegunn/fzf.vim'
+call plug#end()
 
 " https://github.com/vim/vim/issues/3117#issuecomment-402622616
 
